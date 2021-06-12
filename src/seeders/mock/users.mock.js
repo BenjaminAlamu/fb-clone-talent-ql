@@ -2,7 +2,7 @@
 const faker = require("faker");
 const bcrypt = require("bcryptjs");
 
-const seedUsers = async (password, type, numOfUsers, emailAddress) => {
+const seedUsers = async (password, numOfUsers, emailAddress) => {
   const users = [];
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -18,9 +18,10 @@ const seedUsers = async (password, type, numOfUsers, emailAddress) => {
       password: hashedPassword,
       email,
       phoneNumber: faker.phone.phoneNumber(),
-      type,
+      image: faker.image.imageUrl(),
       accountConfirmed: true,
-      fullName: `${faker.name.firstName()} ${faker.name.lastName()}`,
+      firstName: faker.name.firstName(),
+      lastName: faker.name.lastName(),
     };
 
     users.push(user);

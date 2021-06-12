@@ -1,13 +1,9 @@
 const mongoose = require("mongoose");
 const logger = require("../helpers/logger");
 require("dotenv").config();
-const { User, Category, Vendor, Menu, Meal, Order } = require("../models");
+const { User, Post } = require("../models");
 const { genericUsers } = require("./mock/users.mock");
-const { createCategories } = require("./mock/category.mock");
-const { getVendorData } = require("./mock/vendor.mock");
-const { getMenuData } = require("./mock/menu.mock");
-const { getMealData } = require("./mock/meal.mock");
-const { getOrderData } = require("./mock/order.mock");
+const { getPostsData } = require("./mock/post.mock");
 
 const connectDB = async () => {
   logger.info("connecting to db");
@@ -37,50 +33,17 @@ const disconnectDB = async () => {
 
 const seedDB = async () => {
   try {
-    logger.info("running seeder");
+    logger.info("Seeding Database");
     await connectDB();
     await clearDB();
 
-    logger.info("Creating Users");
+    logger.info("Creating Random Users");
     const fakeusers = await User.create(
-      await genericUsers("password", "USER", 10, "primary-user@mealguru.app")
+      await genericUsers("password", 20, "primary-user@fbclone.app")
     );
 
-    logger.info("Creating Categories");
-    const categories = await Category.create(await createCategories());
-
-    logger.info("Creating Vendors");
-    const fakeVendors = await User.create(
-      await genericUsers("password", "VENDOR", 5, "primary-vendor@mealguru.app")
-    );
-    const vendorUsers = await Vendor.create(
-      await getVendorData(fakeVendors, categories)
-    );
-    logger.info("Creating Admin");
-    const fakeAdmin = await User.create(
-      await genericUsers("password", "ADMIN", 1, "admin@mealguru.app")
-    );
-    logger.info("Creating Super Admin");
-    const fakeSuperAdmin = await User.create(
-      await genericUsers(
-        "password",
-        "SUPER_ADMIN",
-        1,
-        "primary-admin@mealguru.app"
-      )
-    );
-    logger.info("Creating Menus");
-    const menus = await Menu.create(await getMenuData(vendorUsers));
-
-    logger.info("Creating Meals");
-    const meals = await Meal.create(
-      await getMealData(categories, vendorUsers, menus)
-    );
-
-    logger.info("Creating Orders");
-    const orders = await Order.create(
-      await getOrderData(fakeusers, vendorUsers, meals)
-    );
+    logger.info("Creating Random Posts");
+    const meals = await Post.create(await getPostsData(fakeusers));
 
     logger.info("seeder completed");
   } catch (e) {
