@@ -10,22 +10,20 @@ cloudinary.config({
 });
 
 module.exports = {
-  uploadImage: async function (image) {
+  uploadImage: async function (files) {
     try {
-      const featureImagePath = await path.resolve(`./uploads/${image.name}`);
-      await image.mv(featureImagePath);
-      return new Promise((resolve, reject) => {
-        cloudinary.uploader
-          .upload(featureImagePath)
-          .then((result) => {
-            fs.unlinkSync(featureImagePath);
-            resolve(result);
-          })
-          .catch((error) => {
-            logger.error(error);
-            reject(error);
-          });
-      });
+      let imageUrls = [];
+      /* eslint-disable no-await-in-loop */
+      for (let i = 0; i < files.length; i += 1) {
+        const file = files[i];
+
+        const uploadedImagePath = path.resolve(`./uploads/${file.name}`);
+        await file.mv(uploadedImagePath);
+        let res = await cloudinary.uploader.upload(uploadedImagePath);
+        imageUrls = [...imageUrls, res.secure_url];
+      }
+      /* eslint-disable no-await-in-loop */
+      return imageUrls;
     } catch (error) {
       logger.error(error);
     }
