@@ -4,9 +4,9 @@ const path = require("path");
 const logger = require("../helpers/logger");
 
 cloudinary.config({
-  cloud_name: "dldd8ucby",
-  api_key: "782219581314631",
-  api_secret: "TvN5GDTv8HFqFwkd1O1x9ORPZs8",
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 module.exports = {
@@ -21,6 +21,7 @@ module.exports = {
         await file.mv(uploadedImagePath);
         let res = await cloudinary.uploader.upload(uploadedImagePath);
         imageUrls = [...imageUrls, res.secure_url];
+        fs.unlinkSync(uploadedImagePath);
       }
       /* eslint-disable no-await-in-loop */
       return imageUrls;

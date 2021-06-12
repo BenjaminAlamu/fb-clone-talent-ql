@@ -4,12 +4,7 @@ const catchAsync = require("../helpers/catchAsync");
 const cloudinaryHelper = require("../helpers/cloudinary");
 const pick = require("../helpers/pick");
 
-const {
-  authService,
-  vendorService,
-  tokenService,
-  emailService,
-} = require("../services");
+const { authService, tokenService } = require("../services");
 
 const register = catchAsync(async function (req, res) {
   const user = await authService.register(req.body);
@@ -42,7 +37,6 @@ const login = catchAsync(async (req, res) => {
 
 const resendToken = catchAsync(async (req, res) => {
   const user = await authService.getUserByEmail(req.body.email);
-  console.log({ user });
   const tokens = await tokenService.generateResendTokens(user);
   emailHelper.sendRegister(user, tokens.emailToken.token);
   res.status(201).send({
@@ -111,10 +105,12 @@ const updateUserById = catchAsync(async (req, res) => {
   if (req.body.password) {
     throw new ApiError(400, "You can't update your password here");
   }
-  await authService.updateUserById(req.user._id, req.body);
+  const user = await authService.updateUserById(req);
   res.status(200).send({
     message: "User updated succesfully",
-    data: {},
+    data: {
+      user,
+    },
   });
 });
 

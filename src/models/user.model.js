@@ -29,6 +29,10 @@ var userSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  image: {
+    type: String,
+    trim: true,
+  },
   accountConfirmed: {
     type: Boolean,
     default: false,

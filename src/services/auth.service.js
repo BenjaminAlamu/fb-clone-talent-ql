@@ -6,6 +6,7 @@ const randomInt = require("random-int");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const tokenService = require("../services/token.service");
+const cloudinaryHelper = require("../helpers/cloudinary");
 
 const register = async (data) => {
   try {
@@ -92,14 +93,19 @@ const fetchUsers = async (criteria = {}, options = {}) => {
   return { users, page: _page };
 };
 
-const updateUserById = async (userId, updateBody) => {
-  const user = await User.findById(userId);
+const updateUserById = async (req) => {
+  let updateBody = req.body;
+  const user = await User.findById(req.user._id);
   if (!user) {
     throw new ApiError(400, "User not found");
   }
   if (updateBody.email) {
     const check = await User.findOne({ email: updateBody.email });
     if (check) throw new ApiError(400, "Email already taken");
+  }
+  if (req.files) {
+    const images = await cloudinaryHelper.uploadImage(Object.values(req.files));
+    updateBody.image = images[0];
   }
   Object.assign(user, updateBody);
   await user.save();

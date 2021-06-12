@@ -27,7 +27,7 @@ app.use("/api/v1", require("./routes/index"));
 
 app.get("/", (req, res) =>
   res.status(200).send({
-    message: "Welcome to Meal Guru API, why are you here",
+    message: "Welcome to FacebookClone API, you should not be here sha",
   })
 );
 app.get("*", (req, res) =>
@@ -55,4 +55,6 @@ routesList = routesList.map((route) => {
 const table = new Table();
 table.push({ Endpoints: "Methods" }, ...routesList);
 
-logger.info(table.toString());
+if (process.env.ENVIRONMENT === "dev") {
+  logger.info(table.toString());
+}
