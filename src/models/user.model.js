@@ -22,6 +22,9 @@ var userSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  pin: {
+    type: Number,
+  },
   password: {
     type: String,
     trim: true,

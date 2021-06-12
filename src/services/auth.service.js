@@ -9,14 +9,14 @@ const tokenService = require("../services/token.service");
 
 const register = async (data) => {
   try {
-    let user = await User.findOne({ email: data.email });
-    if (user) {
-      const err = {
-        code: 400,
-        message: "User with that email already exists",
-      };
-      throw err;
-    }
+    // let user = await User.findOne({ email: data.email });
+    // if (user) {
+    //   const err = {
+    //     code: 400,
+    //     message: "User with that email already exists",
+    //   };
+    //   throw err;
+    // }
     data.password = await bcrypt.hash(data.password, 10);
     data.pin = randomInt(100000, 999999);
     user = await User.create(data);
@@ -31,9 +31,9 @@ const login = async (email, password) => {
   if (!user) {
     throw new ApiError(400, "Invalid email or password");
   }
-  if (!user.accountConfirmed) {
-    throw new ApiError(400, "Acount not activated");
-  }
+  // if (!user.accountConfirmed) {
+  //   throw new ApiError(400, "Acount not activated");
+  // }
   await comparePassword(password, user);
   return user;
 };
@@ -106,11 +106,15 @@ const updateUserById = async (userId, updateBody) => {
   return user;
 };
 
-const emailVerification = async (email) => {
+const emailVerification = async (email, pin) => {
   try {
     let user = await getUserByEmail(email);
-    user = await updateUserById(user._id, { accountConfirmed: true });
-    return user;
+    if (user.pin == pin) {
+      user = await updateUserById(user._id, { accountConfirmed: true });
+      return user;
+    } else {
+      throw new ApiError(400, "Invalid Pin ");
+    }
   } catch (error) {
     throw new ApiError(error.code || 500, error.message || "An error occured");
   }

@@ -15,9 +15,13 @@ const login = {
 
 const register = {
   body: Joi.object().keys({
-    fullName: Joi.string().required().messages({
-      "string.empty": `Full Name cannot be an empty field`,
-      "any.required": `Full Name is a required field`,
+    firstName: Joi.string().required().messages({
+      "string.empty": `First Name cannot be an empty field`,
+      "any.required": `First Name is a required field`,
+    }),
+    lastName: Joi.string().required().messages({
+      "string.empty": `Last Name cannot be an empty field`,
+      "any.required": `Last Name is a required field`,
     }),
     password: Joi.string().required().messages({
       "string.empty": `Password cannot be an empty field`,
@@ -31,12 +35,6 @@ const register = {
       "string.empty": `Phone Number cannot be an empty field`,
       "any.required": `Phone Number is a required field`,
     }),
-    type: Joi.string()
-      .valid("ADMIN", "USER", "VENDOR", "SUPER_ADMIN")
-      .messages({
-        "string.empty": `Type is a required field`,
-        "any.only": `Invalid User type passed`,
-      }),
   }),
 };
 
@@ -46,6 +44,15 @@ const forgotPassword = {
       "string.empty": `Email cannot be an empty field`,
       "any.required": `Email is a required field`,
       "string.email": `You need to enter a valid email`,
+    }),
+  }),
+};
+
+const confirmAccount = {
+  body: Joi.object().keys({
+    pin: Joi.string().required().messages({
+      "string.empty": `Pin cannot be an empty field`,
+      "any.required": `Pin is a required field`,
     }),
   }),
 };
@@ -95,4 +102,6 @@ module.exports = {
   resetPassword,
   updatePassword,
   register,
+  confirmAccount,
+  resendMail,
 };

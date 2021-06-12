@@ -15,15 +15,15 @@ router.post(
 router.post("/login", [validate(authValidation.login)], authController.login);
 module.exports = router;
 
-router.get(
+router.post(
   "/account/confirm",
-  [authService.validateToken],
+  [authService.validateToken, validate(authValidation.confirmAccount)],
   authController.emailVerification
 );
 
-router.get(
+router.post(
   "/account/resend",
-  [authService.validateToken],
+  [validate(authValidation.resendMail)],
   authController.resendToken
 );
 

@@ -13,42 +13,6 @@ const {
 
 const register = catchAsync(async function (req, res) {
   const user = await authService.register(req.body);
-  if (req.body.type === "VENDOR") {
-    await vendorService.createVendor(user._id);
-  }
-  const tokens = await tokenService.generateAuthTokens(user, true);
-  emailHelper.sendRegister(user, tokens.emailToken.token);
-  res.status(201).send({
-    message: "Registration successful",
-    data: {
-      user,
-      token: tokens.access.token,
-    },
-  });
-});
-
-const registerVendorAssistant = catchAsync(async function (req, res) {
-  const user = await authService.register({
-    ...req.body,
-    type: "VENDOR_ASSISTANT",
-    vendor: req.vendor._id,
-  });
-  const tokens = await tokenService.generateAuthTokens(user, true);
-  emailHelper.sendRegister(user, tokens.emailToken.token);
-  res.status(201).send({
-    message: "Registration successful",
-    data: {
-      user,
-      token: tokens.access.token,
-    },
-  });
-});
-
-const registerAdmin = catchAsync(async function (req, res) {
-  const user = await authService.register({
-    ...req.body,
-    type: "ADMIN",
-  });
   const tokens = await tokenService.generateAuthTokens(user, true);
   emailHelper.sendRegister(user, tokens.emailToken.token);
   res.status(201).send({
@@ -77,8 +41,10 @@ const login = catchAsync(async (req, res) => {
 });
 
 const resendToken = catchAsync(async (req, res) => {
-  const tokens = await tokenService.generateResendTokens(req.user);
-  emailHelper.sendRegister(req.user, tokens.emailToken.token);
+  const user = await authService.getUserByEmail(req.body.email);
+  console.log({ user });
+  const tokens = await tokenService.generateResendTokens(user);
+  emailHelper.sendRegister(user, tokens.emailToken.token);
   res.status(201).send({
     message: "Email sent successfully",
     data: {
@@ -89,7 +55,10 @@ const resendToken = catchAsync(async (req, res) => {
 
 const emailVerification = catchAsync(async (req, res) => {
   try {
-    const user = await authService.emailVerification(req.user.email);
+    const user = await authService.emailVerification(
+      req.user.email,
+      req.body.pin
+    );
     res.send({
       message: "Account activated successfully",
       user,
@@ -111,8 +80,10 @@ const forgotPassword = catchAsync(async (req, res) => {
   );
   emailHelper.sendReset(user, resetPasswordToken);
   res.status(200).send({
-    message: "Please check your email",
-    data: {},
+    message: "Reset Information has been sent to your email",
+    data: {
+      token: resetPasswordToken,
+    },
   });
 });
 
@@ -206,8 +177,6 @@ module.exports = {
   updatePassword,
   resendToken,
   getUser,
-  registerVendorAssistant,
-  registerAdmin,
   uploadImages,
   getUsers,
   updateUserById,
