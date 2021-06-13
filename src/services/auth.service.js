@@ -10,14 +10,14 @@ const cloudinaryHelper = require("../helpers/cloudinary");
 
 const register = async (data) => {
   try {
-    // let user = await User.findOne({ email: data.email });
-    // if (user) {
-    //   const err = {
-    //     code: 400,
-    //     message: "User with that email already exists",
-    //   };
-    //   throw err;
-    // }
+    let user = await User.findOne({ email: data.email });
+    if (user) {
+      const err = {
+        code: 400,
+        message: "User with that email already exists",
+      };
+      throw err;
+    }
     data.password = await bcrypt.hash(data.password, 10);
     data.pin = randomInt(100000, 999999);
     user = await User.create(data);

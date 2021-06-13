@@ -41,22 +41,6 @@ const list = catchAsync(async function (req, res) {
   });
 });
 
-const more = catchAsync(async function (req, res) {
-  const filter = { isDeleted: false };
-  const options = pick(req.query, ["sortBy", "limit", "page"]);
-  const { posts, page } = await postService.fetchPosts(filter, options);
-  const count = await postService.count(filter);
-  res.status(200).send({
-    status: "success",
-    message: "Posts Fetched successfully",
-    data: {
-      count,
-      currentPage: page,
-      posts,
-    },
-  });
-});
-
 const listOne = catchAsync(async function (req, res) {
   const post = await postService.findOne({
     _id: req.params._id,
@@ -92,5 +76,4 @@ module.exports = {
   list,
   deletePost,
   listOne,
-  more,
 };
