@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 
 require("dotenv").config();
+
 const port = process.env.PORT;
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -42,19 +43,18 @@ app.use(errorConverter);
 // handle error
 app.use(errorHandler);
 
-app.listen(port, () => {
+module.exports = app.listen(port, () => {
   logger.info(`Server started at ${port}`);
 });
 
-let routesList = listAllRoutes(app);
-routesList = routesList.map((route) => {
-  const obj = {};
-  obj[route.path] = route.methods.join(" | ");
-  return obj;
-});
-const table = new Table();
-table.push({ Endpoints: "Methods" }, ...routesList);
-
 if (process.env.ENVIRONMENT === "dev") {
+  let routesList = listAllRoutes(app);
+  routesList = routesList.map((route) => {
+    const obj = {};
+    obj[route.path] = route.methods.join(" | ");
+    return obj;
+  });
+  const table = new Table();
+  table.push({ Endpoints: "Methods" }, ...routesList);
   logger.info(table.toString());
 }

@@ -137,12 +137,15 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
     if (!user) {
       throw new ApiError(400, "Password reset failed");
     }
+
     await Token.deleteMany({ user: user.id, type: "resetPassword" });
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    const updatedUser = await updateUserById(user.id, {
+    Object.assign(user, {
       password: hashedPassword,
     });
-    return updatedUser;
+    await user.save();
+
+    return user;
   } catch (error) {
     throw new ApiError(
       400,

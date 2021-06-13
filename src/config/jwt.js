@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
-const SECRET_KEY = "BenjaminAlamu";
+require("dotenv").config();
 
-const signToken = payload =>
+const signToken = (payload) =>
   new Promise((resolve, reject) => {
-    jwt.sign(payload, SECRET_KEY, (err, token) => {
+    jwt.sign(payload, process.env.SECRET_KEY, (err, token) => {
       if (err) {
         reject(err);
       }
@@ -11,9 +11,9 @@ const signToken = payload =>
     });
   });
 
-const decodeToken = token =>
+const decodeToken = (token) =>
   new Promise((resolve, reject) => {
-    const decoded = jwt.decode(token, SECRET_KEY, err => {
+    const decoded = jwt.decode(token, process.env.SECRET_KEY, (err) => {
       if (err) {
         reject(err);
       }
@@ -23,5 +23,5 @@ const decodeToken = token =>
 
 module.exports = {
   signToken,
-  decodeToken
+  decodeToken,
 };

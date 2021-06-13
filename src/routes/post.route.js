@@ -12,6 +12,8 @@ router.post(
   postController.createPost
 );
 
+router.get("/more", postController.more);
+
 router.get("/all", [authService.validateToken], postController.list);
 
 router.put(

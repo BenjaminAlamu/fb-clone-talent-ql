@@ -1,7 +1,6 @@
 const { Post, Coupon } = require("../models");
 const ApiError = require("../helpers/ApiError");
 const cloudinaryHelper = require("../helpers/cloudinary");
-const slugify = require("slugify");
 
 const createPost = async (req) => {
   try {
